@@ -3,12 +3,12 @@ This demo is just a rewrite of darknet yolo on the website（https://pjreddie.co
 
 # How to run
 1. git clone it first, and cd ros_yolo/darknet <br> 
-wget https://pjreddie.com/media/files/yolo.weights <br> 
-wget https://pjreddie.com/media/files/tiny-yolo-voc.weights<br> 
+wget https://pjreddie.com/media/files/yolo.weights <br> 
+wget https://pjreddie.com/media/files/tiny-yolo-voc.weights<br> 
 cd ..<br> 
 cd data<br> 
-wget https://pjreddie.com/media/files/yolo.weights<br> 
-wget https://pjreddie.com/media/files/tiny-yolo-voc.weights<br> 
+wget https://pjreddie.com/media/files/yolo.weights<br> 
+wget https://pjreddie.com/media/files/tiny-yolo-voc.weights<br> 
 2. change the path on line 231 in file image.c in /darknet/src to your own path
 3. Open a terminal:<br>  
 cd darknet<br>
