@@ -14,6 +14,7 @@ struct detection{
     int classes;
     box *pos;
 };
+
 detection test_result ;
 
 /*仅测试节点用*/
