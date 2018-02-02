@@ -235,10 +235,13 @@ image **load_alphabet()
     return alphabets;
 }
 
-void draw_detections(image im, int num, float thresh, box *boxes, float **probs, float **masks, char **names, image **alphabet, int classes)
+int ** draw_detections(image im, int num, float thresh, box *boxes, float **probs, float **masks, char **names, image **alphabet, int classes)
 {
     int i,j;
-
+    int **selected=(int **)malloc(10*sizeof(int *)); 
+    for (i=0;i<10;i++)  
+        selected[i]=(int *)malloc(2*sizeof(int));   
+    int k = 0;
     for(i = 0; i < num; ++i){
         char labelstr[4096] = {0};
         int class = -1;
@@ -252,6 +255,12 @@ void draw_detections(image im, int num, float thresh, box *boxes, float **probs,
                     strcat(labelstr, names[j]);
                 }
                 printf("%s: %.0f%%\n", names[j], probs[i][j]*100);
+                if(k < 10){
+                    selected[k][0] = i;
+                    selected[k][1] = j;
+                    k++;
+                }
+                
             }
         }
         if(class >= 0){
@@ -305,6 +314,12 @@ void draw_detections(image im, int num, float thresh, box *boxes, float **probs,
             }
         }
     }
+    while(k < 10){
+            selected[k][0] = -1;
+            selected[k][1] = -1;
+            k++;
+        }
+    return selected;
 }
 
 void transpose_image(image im)

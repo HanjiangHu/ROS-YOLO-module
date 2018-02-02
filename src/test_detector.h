@@ -13,6 +13,7 @@ struct detection{
     char **names;
     int classes;
     box *pos;
+    int **selected;//选中的序号
 };
 
 detection test_result ;
@@ -92,7 +93,7 @@ void detector_test(char *datacfg, char *cfgfile, char *weightfile, char *filenam
         }
         else{
             save_image(im, "predictions");
-/*#ifdef OPENCV
+    /*#ifdef OPENCV
             cvNamedWindow("predictions", CV_WINDOW_NORMAL); 
             if(fullscreen){
                 cvSetWindowProperty("predictions", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);
@@ -100,7 +101,7 @@ void detector_test(char *datacfg, char *cfgfile, char *weightfile, char *filenam
             show_image(im, "predictions");
             cvWaitKey(0);
             cvDestroyAllWindows();
-#endif*/
+    #endif*/
         }
 
         free_image(im);
@@ -110,7 +111,7 @@ void detector_test(char *datacfg, char *cfgfile, char *weightfile, char *filenam
         if (filename) break;
     }
 }
-void free_ptrs1(float **ptrs, int n)
+    void free_ptrs1(float **ptrs, int n)
 {
     int i;
     for(i = 0; i < n; ++i) free(ptrs[i]);
@@ -164,7 +165,7 @@ detection detector1(char *datacfg, char *cfgfile, char *weightfile, char *filena
         printf("%s: Predicted in %f seconds.\n", input, what_time_is_it_now()-time);*/
         get_region_boxes(l, im.w, im.h, net->w, net->h, thresh, probs, boxes, masks, 0, 0, hier_thresh, 1);
         if (nms) do_nms_sort(boxes, probs, l.w*l.h*l.n, l.classes, nms);
-        draw_detections(im, l.w*l.h*l.n, thresh, boxes, probs, masks, names, alphabet, l.classes);
+        test_result.selected = draw_detections(im, l.w*l.h*l.n, thresh, boxes, probs, masks, names, alphabet, l.classes);//获得目标序号
         test_result.num = l.w*l.h*l.n;
         test_result.names = names;
         test_result.probs = probs;
@@ -175,7 +176,7 @@ detection detector1(char *datacfg, char *cfgfile, char *weightfile, char *filena
         }
         else{
             save_image(im, "predictions");
-/*#ifdef OPENCV
+    /*#ifdef OPENCV
             cvNamedWindow("predictions", CV_WINDOW_NORMAL); 
             if(fullscreen){
                 cvSetWindowProperty("predictions", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);
@@ -183,14 +184,12 @@ detection detector1(char *datacfg, char *cfgfile, char *weightfile, char *filena
             show_image(im, "predictions");
             cvWaitKey(0);
             cvDestroyAllWindows();
-#endif*/
+    #endif*/
         }
-
         free_image(im);
         free_image(sized);
         free(boxes);
         free_ptrs1((float **)probs, l.w*l.h*l.n);
-    
     return test_result;
 }
 #endif

@@ -36,7 +36,6 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg) {
         cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(msg, "bgr8");
         cv::imwrite("/home/huhanjiang/catkin_ws/src/ros_yolo/data/rgb.png", cv_ptr->image);
         
-        //std::cout<<"hhh"<<std::endl;
         publishRet(cfgdata,cfg,weights ,image_test);
 		
     } catch (cv_bridge::Exception& e) {
@@ -50,17 +49,21 @@ void publishRet(char *datacfg, char *cfgfile, char *weightfile, char *filename) 
     detection test = detector1(datacfg,cfgfile,weightfile ,filename,0.24,0.5,0,0);
     std_msgs::String msg;
     std::stringstream ss;
-    int i,j;
-    ss << test.num << '\n';
-        for(i = 0;i < test.num;i++){
-            for(j = 0; j < test.classes; ++j){
-            if ((test.probs[i][j] > .24) && (test.probs[i][j] < 1.0) && (typeid(test.probs[i][j]) == typeid(float))){
-                ss << test.names[j] << '\t' << test.probs[i][j] <<'\t' << test.pos[i].x <<'\t' <<test.pos[i].y << '\t' <<test.pos[i].w << '\t' <<test.pos[i].h << '\n';
-            }
+
+        for(int i = 0; i < 10; i++){
+            if(test.selected[i][0] != -1){
+            ss << test.names[test.selected[i][1]] <<   "\t"  << test.probs[test.selected[i][0]][test.selected[i][1]] <<  "\t"    
+            << test.pos[test.selected[i][0]].x <<  "\t"  <<test.pos[test.selected[i][0]].y <<  "\t"  <<test.pos[test.selected[i][0]].w << "\t"   
+            <<test.pos[test.selected[i][0]].h << std::endl;
         }
+        else break;
         }
+    
     msg.data = ss.str();
     gPublisher.publish(msg);
+    for(int i=0;i<10;i++)  
+        free(test.selected[i]);  
+    free(test.selected);  
 }
 
 int main(int argc, char **argv) {
